@@ -7,21 +7,24 @@ import MainContent from './components/MainContent';
 import NotificationToast from './components/NotificationToast';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { NotificationProvider } from './context/NotificationContext';
+import { NotificationProvider, useNotification } from './context/NotificationContext';
 
-function App() {
+const AppContent: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authPage, setAuthPage] = useState<'login' | 'forgot-password'>('login');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const { showNotification } = useNotification();
 
   const handleLogin = () => {
     setIsAuthenticated(true);
+    showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setAuthPage('login');
+    showNotification('Vous avez été déconnecté avec succès.', 'info');
   };
 
   // Gestion des changements d'URL pour la récupération de mot de passe
@@ -42,47 +45,49 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <ThemeProvider>
-        <LanguageProvider>
-          <NotificationProvider>
-            {authPage === 'login' ? (
-              <Login onLogin={handleLogin} />
-            ) : (
-              <ForgotPassword onBack={() => setAuthPage('login')} />
-            )}
-            <NotificationToast />
-          </NotificationProvider>
-        </LanguageProvider>
-      </ThemeProvider>
+      <>
+        {authPage === 'login' ? (
+          <Login onLogin={handleLogin} />
+        ) : (
+          <ForgotPassword onBack={() => setAuthPage('login')} />
+        )}
+        <NotificationToast />
+      </>
     );
   }
 
   return (
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors">
+      <Header 
+        sidebarOpen={sidebarOpen} 
+        setSidebarOpen={setSidebarOpen}
+        onLogout={handleLogout}
+      />
+      
+      <div className="flex h-screen pt-16">
+        <Sidebar 
+          isOpen={sidebarOpen} 
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+        
+        <MainContent 
+          currentPage={currentPage}
+          sidebarOpen={sidebarOpen}
+        />
+      </div>
+      
+      <NotificationToast />
+    </div>
+  );
+};
+
+function App() {
+  return (
     <ThemeProvider>
       <LanguageProvider>
         <NotificationProvider>
-          <div className="min-h-screen bg-slate-900" style={{ backgroundColor: 'rgba(30, 41, 59, 0.9)' }}>
-            <Header 
-              sidebarOpen={sidebarOpen} 
-              setSidebarOpen={setSidebarOpen}
-              onLogout={handleLogout}
-            />
-            
-            <div className="flex h-screen pt-16">
-              <Sidebar 
-                isOpen={sidebarOpen} 
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-              />
-              
-              <MainContent 
-                currentPage={currentPage}
-                sidebarOpen={sidebarOpen}
-              />
-            </div>
-            
-            <NotificationToast />
-          </div>
+          <AppContent />
         </NotificationProvider>
       </LanguageProvider>
     </ThemeProvider>

@@ -1,9 +1,13 @@
 import React from 'react';
-import { Car, Plus, Edit, Trash2, Settings } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useNotification } from '../../context/NotificationContext';
+import Button from '../ui/Button';
+import VehicleCard from '../ui/VehicleCard';
 
 const Vehicles: React.FC = () => {
   const { t } = useLanguage();
+  const { showNotification } = useNotification();
 
   const vehicles = [
     {
@@ -52,51 +56,40 @@ const Vehicles: React.FC = () => {
     }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-500';
-      case 'rented':
-        return 'bg-blue-500';
-      case 'maintenance':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
+  const handleEdit = (id: number) => {
+    showNotification(`Modification du véhicule #${id}`, 'info');
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'available':
-        return t('available');
-      case 'rented':
-        return t('rented');
-      case 'maintenance':
-        return t('maintenance');
-      default:
-        return status;
-    }
+  const handleDelete = (id: number) => {
+    showNotification(`Véhicule #${id} supprimé`, 'warning');
+  };
+
+  const handleSettings = (id: number) => {
+    showNotification(`Paramètres du véhicule #${id}`, 'info');
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">{t('vehicles')}</h1>
-        <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition-colors">
-          <Plus className="h-5 w-5" />
-          <span>{t('addVehicle')}</span>
-        </button>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{t('vehicles')}</h1>
+        <Button 
+          variant="primary" 
+          icon={Plus} 
+          onClick={() => showNotification('Ajout d\'un nouveau véhicule', 'success')}
+        >
+          {t('addVehicle')}
+        </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 p-4 bg-slate-800 rounded-lg border border-slate-700">
-        <select className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white">
+      <div className="flex flex-wrap gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+        <select className="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-white">
           <option>{t('allCategories')}</option>
           <option>Citadine</option>
           <option>Berline</option>
           <option>SUV</option>
         </select>
-        <select className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white">
+        <select className="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-white">
           <option>{t('allStatuses')}</option>
           <option>{t('available')}</option>
           <option>{t('rented')}</option>
@@ -107,45 +100,13 @@ const Vehicles: React.FC = () => {
       {/* Vehicles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {vehicles.map((vehicle) => (
-          <div key={vehicle.id} className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-slate-600 transition-colors">
-            <div className="relative">
-              <img 
-                src={vehicle.image} 
-                alt={`${vehicle.make} ${vehicle.model}`}
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute top-3 right-3">
-                <span className={`px-3 py-1 rounded-full text-xs text-white ${getStatusColor(vehicle.status)}`}>
-                  {getStatusText(vehicle.status)}
-                </span>
-              </div>
-            </div>
-            
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-white mb-1">
-                {vehicle.make} {vehicle.model}
-              </h3>
-              <p className="text-slate-400 text-sm mb-2">{vehicle.year} • {vehicle.category}</p>
-              
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-slate-300 text-sm">{vehicle.mileage}</span>
-                <span className="text-blue-400 font-semibold">{vehicle.price}</span>
-              </div>
-              
-              <div className="flex space-x-2">
-                <button className="flex-1 flex items-center justify-center space-x-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm transition-colors">
-                  <Edit className="h-4 w-4" />
-                  <span>{t('edit')}</span>
-                </button>
-                <button className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 transition-colors">
-                  <Settings className="h-4 w-4" />
-                </button>
-                <button className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
+          <VehicleCard
+            key={vehicle.id}
+            vehicle={vehicle}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onSettings={handleSettings}
+          />
         ))}
       </div>
     </div>

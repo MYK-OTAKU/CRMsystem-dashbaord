@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Car, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useNotification } from '../../context/NotificationContext';
+import Button from '../ui/Button';
 
 interface LoginProps {
   onLogin: () => void;
@@ -8,19 +10,32 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const { t } = useLanguage();
+  const { showNotification } = useNotification();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulation de connexion
-    onLogin();
+    
+    if (!email || !password) {
+      showNotification('Veuillez remplir tous les champs', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Simulation de connexion avec délai
+    setTimeout(() => {
+      setIsLoading(false);
+      onLogin();
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4 transition-colors">
       <div className="max-w-md w-full space-y-8">
         {/* Logo et titre */}
         <div className="text-center">
@@ -30,25 +45,25 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </div>
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">AutoRent Pro</h2>
-          <p className="text-slate-400">{t('loginSubtitle')}</p>
+          <p className="text-slate-600 dark:text-slate-400">{t('loginSubtitle')}</p>
         </div>
 
         {/* Formulaire de connexion */}
-        <div className="bg-slate-800 p-8 rounded-xl border border-slate-700">
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 {t('email')}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-500 dark:text-slate-400" />
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder={t('emailPlaceholder')}
                   required
                 />
@@ -57,24 +72,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
             {/* Mot de passe */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 {t('password')}
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-500 dark:text-slate-400" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder={t('passwordPlaceholder')}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -89,15 +104,15 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500"
+                  className="h-4 w-4 text-blue-600 bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500"
                 />
-                <label htmlFor="remember-me" className="ml-2 text-sm text-slate-300">
+                <label htmlFor="remember-me" className="ml-2 text-sm text-slate-700 dark:text-slate-300">
                   {t('rememberMe')}
                 </label>
               </div>
               <button
                 type="button"
-                className="text-sm text-blue-400 hover:text-blue-300"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                 onClick={() => window.location.hash = '#forgot-password'}
               >
                 {t('forgotPassword')}
@@ -105,18 +120,21 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </div>
 
             {/* Bouton de connexion */}
-            <button
+            <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+              variant="primary"
+              size="lg"
+              loading={isLoading}
+              className="w-full"
             >
               {t('signIn')}
-            </button>
+            </Button>
           </form>
         </div>
 
         {/* Footer */}
         <div className="text-center">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             {t('loginFooter')}
           </p>
         </div>

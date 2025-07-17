@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, currentPage, setCurrentPage }
   ];
 
   return (
-    <aside className={`fixed left-0 top-16 h-full bg-slate-800 border-r border-slate-700 transition-all duration-300 z-40 ${
+    <aside className={`fixed left-0 top-16 h-full bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 z-40 ${
       isOpen ? 'w-64' : 'w-16'
     }`}>
       <div className="flex flex-col h-full">
@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, currentPage, setCurrentPage }
                   className={`w-full flex items-center px-3 py-3 rounded-lg transition-colors ${
                     currentPage === item.id
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
@@ -65,11 +65,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, currentPage, setCurrentPage }
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-700">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
           {isOpen && (
             <div className="text-center">
-              <p className="text-xs text-slate-400">{t('version')} 1.0.0</p>
-              <p className="text-xs text-slate-500 mt-1">AutoRent Pro</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">{t('version')} 1.0.0</p>
+              <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">AutoRent Pro</p>
             </div>
           )}
         </div>

@@ -1,23 +1,66 @@
 import React from 'react';
-import { Globe, Palette, Bell, User, Shield, Database } from 'lucide-react';
+import { Globe, Palette, Bell, User, Shield, Database, History, Trash2 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNotification } from '../../context/NotificationContext';
 import Card from '../ui/Card';
+import Button from '../ui/Button';
 
 const Settings: React.FC = () => {
   const { t, language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { notifications, toggleNotifications, showNotification } = useNotification();
+  const { 
+    notifications, 
+    toggleNotifications, 
+    showNotification, 
+    getNotificationHistory, 
+    clearAllNotifications 
+  } = useNotification();
 
   const handleThemeChange = (newTheme: 'dark' | 'light') => {
     setTheme(newTheme);
-    showNotification(`Thème changé vers ${newTheme === 'dark' ? 'sombre' : 'clair'}`, 'success');
+    showNotification(t('settingsSaved'), 'success');
   };
 
   const handleLanguageChange = (newLanguage: 'fr' | 'en') => {
     setLanguage(newLanguage);
-    showNotification(`Langue changée vers ${newLanguage === 'fr' ? 'Français' : 'English'}`, 'success');
+    showNotification(t('settingsSaved'), 'success');
+  };
+
+  const handleProfileEdit = () => {
+    showNotification(t('profileUpdated'), 'success');
+  };
+
+  const handlePasswordChange = () => {
+    showNotification(t('passwordChanged'), 'success');
+  };
+
+  const handleTwoFactorEnable = () => {
+    showNotification(t('twoFactorEnabled'), 'success');
+  };
+
+  const handleViewLoginHistory = () => {
+    const history = getNotificationHistory();
+    showNotification(`${history.length} connexions récentes trouvées`, 'info');
+  };
+
+  const handleExportData = () => {
+    // Simulation d'export
+    setTimeout(() => {
+      showNotification(t('dataExported'), 'success');
+    }, 1500);
+    showNotification('Export en cours...', 'info');
+  };
+
+  const handleDeleteAccount = () => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
+      showNotification(t('accountDeleted'), 'warning');
+    }
+  };
+
+  const handleClearNotifications = () => {
+    clearAllNotifications();
+    showNotification('Notifications effacées', 'info');
   };
 
   const settingSections = [
@@ -113,19 +156,54 @@ const Settings: React.FC = () => {
         {
           label: t('profileInformation'),
           description: t('profileInformationDescription'),
+        {
+          label: t('notificationHistory'),
+          description: 'Voir l\'historique des notifications',
           component: (
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors" onClick={() => showNotification('Modification du profil', 'info')}>
+            <div className="flex space-x-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                icon={History}
+                onClick={() => {
+                  const history = getNotificationHistory();
+                  showNotification(`${history.length} notifications dans l'historique`, 'info');
+                }}
+              >
+                {t('view')}
+              </Button>
+              <Button 
+                variant="danger" 
+                size="sm" 
+                icon={Trash2}
+                onClick={handleClearNotifications}
+              >
+                {t('clearNotifications')}
+              </Button>
+            </div>
+          )
+        }
+          component: (
+            <Button 
+              variant="primary" 
+              size="sm"
+              onClick={handleProfileEdit}
+            >
               {t('edit')}
-            </button>
+            </Button>
           )
         },
         {
           label: t('changePassword'),
           description: t('changePasswordDescription'),
           component: (
-            <button className="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-colors" onClick={() => showNotification('Changement de mot de passe', 'info')}>
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={handlePasswordChange}
+            >
               {t('change')}
-            </button>
+            </Button>
           )
         }
       ]
@@ -138,18 +216,26 @@ const Settings: React.FC = () => {
           label: t('twoFactorAuth'),
           description: t('twoFactorAuthDescription'),
           component: (
-            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors" onClick={() => showNotification('Authentification 2FA activée', 'success')}>
+            <Button 
+              variant="success" 
+              size="sm"
+              onClick={handleTwoFactorEnable}
+            >
               {t('enable')}
-            </button>
+            </Button>
           )
         },
         {
           label: t('loginHistory'),
           description: t('loginHistoryDescription'),
           component: (
-            <button className="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-colors" onClick={() => showNotification('Historique des connexions', 'info')}>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleViewLoginHistory}
+            >
               {t('view')}
-            </button>
+            </Button>
           )
         }
       ]
@@ -162,18 +248,26 @@ const Settings: React.FC = () => {
           label: t('exportData'),
           description: t('exportDataDescription'),
           component: (
-            <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors" onClick={() => showNotification('Export des données en cours...', 'info')}>
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={handleExportData}
+            >
               {t('export')}
-            </button>
+            </Button>
           )
         },
         {
           label: t('deleteAccount'),
           description: t('deleteAccountDescription'),
           component: (
-            <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors" onClick={() => showNotification('Suppression de compte - Action critique', 'warning')}>
+            <Button 
+              variant="danger" 
+              size="sm"
+              onClick={handleDeleteAccount}
+            >
               {t('delete')}
-            </button>
+            </Button>
           )
         }
       ]

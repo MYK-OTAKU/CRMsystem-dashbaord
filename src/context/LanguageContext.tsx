@@ -8,6 +8,27 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+const LANGUAGE_STORAGE_KEY = 'autorent_language';
+
+const loadLanguage = (): 'fr' | 'en' => {
+  try {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (saved === 'fr' || saved === 'en') {
+      return saved;
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement de la langue:', error);
+  }
+  return 'fr';
+};
+
+const saveLanguage = (language: 'fr' | 'en') => {
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde de la langue:', error);
+  }
+};
 const translations = {
   fr: {
     // Header
@@ -118,7 +139,18 @@ const translations = {
     view: 'Voir',
     export: 'Exporter',
     delete: 'Supprimer',
-    change: 'Modifier'
+    change: 'Modifier',
+    
+    // Notifications
+    notificationHistory: 'Historique des notifications',
+    clearNotifications: 'Effacer les notifications',
+    noNotifications: 'Aucune notification',
+    profileUpdated: 'Profil mis à jour avec succès',
+    passwordChanged: 'Mot de passe modifié avec succès',
+    twoFactorEnabled: 'Authentification 2FA activée',
+    dataExported: 'Données exportées avec succès',
+    accountDeleted: 'Compte supprimé avec succès',
+    settingsSaved: 'Paramètres sauvegardés'
   },
   en: {
     // Header
@@ -229,19 +261,35 @@ const translations = {
     view: 'View',
     export: 'Export',
     delete: 'Delete',
-    change: 'Change'
+    change: 'Change',
+    
+    // Notifications
+    notificationHistory: 'Notification History',
+    clearNotifications: 'Clear Notifications',
+    noNotifications: 'No notifications',
+    profileUpdated: 'Profile updated successfully',
+    passwordChanged: 'Password changed successfully',
+    twoFactorEnabled: 'Two-factor authentication enabled',
+    dataExported: 'Data exported successfully',
+    accountDeleted: 'Account deleted successfully',
+    settingsSaved: 'Settings saved'
   }
 };
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<'fr' | 'en'>('fr');
+  const [language, setLanguage] = useState<'fr' | 'en'>(loadLanguage);
+
+  const handleSetLanguage = (newLanguage: 'fr' | 'en') => {
+    setLanguage(newLanguage);
+    saveLanguage(newLanguage);
+  };
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations['fr']] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

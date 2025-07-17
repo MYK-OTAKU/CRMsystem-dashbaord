@@ -156,6 +156,16 @@ const Settings: React.FC = () => {
         {
           label: t('profileInformation'),
           description: t('profileInformationDescription'),
+          component: ( // This was the missing 'component' property
+            <Button 
+              variant="primary" 
+              size="sm"
+              onClick={handleProfileEdit}
+            >
+              {t('edit')}
+            </Button>
+          )
+        }, // Added a comma here to separate the objects in the array
         {
           label: t('notificationHistory'),
           description: 'Voir l\'historique des notifications',
@@ -181,16 +191,6 @@ const Settings: React.FC = () => {
                 {t('clearNotifications')}
               </Button>
             </div>
-          )
-        }
-          component: (
-            <Button 
-              variant="primary" 
-              size="sm"
-              onClick={handleProfileEdit}
-            >
-              {t('edit')}
-            </Button>
           )
         },
         {

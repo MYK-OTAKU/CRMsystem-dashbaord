@@ -1,14 +1,15 @@
 import React from 'react';
-import { Menu, Bell, User, Settings, Search, Car } from 'lucide-react';
+import { Menu, Bell, User, Search, Car, LogOut } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  const { language, setLanguage, t } = useLanguage();
+const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen, onLogout }) => {
+  const { t } = useLanguage();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-slate-800 border-b border-slate-700 h-16">
@@ -47,22 +48,17 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as 'fr' | 'en')}
-            className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="fr">🇫🇷 FR</option>
-            <option value="en">🇬🇧 EN</option>
-          </select>
-
           <button className="p-2 rounded-lg hover:bg-slate-700 transition-colors relative">
             <Bell className="h-5 w-5 text-slate-300" />
             <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
           </button>
 
-          <button className="p-2 rounded-lg hover:bg-slate-700 transition-colors">
-            <Settings className="h-5 w-5 text-slate-300" />
+          <button 
+            onClick={onLogout}
+            className="p-2 rounded-lg hover:bg-slate-700 transition-colors"
+            title={t('logout')}
+          >
+            <LogOut className="h-5 w-5 text-slate-300" />
           </button>
 
           <div className="flex items-center space-x-3 border-l border-slate-600 pl-4">

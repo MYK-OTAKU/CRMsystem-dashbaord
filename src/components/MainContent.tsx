@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard';
 import Vehicles from './pages/Vehicles';
 import Reservations from './pages/Reservations';
 import Customers from './pages/Customers';
+import Settings from './pages/Settings';
 import { useLanguage } from '../context/LanguageContext';
 
 interface MainContentProps {
@@ -34,7 +35,7 @@ const MainContent: React.FC<MainContentProps> = ({ currentPage, sidebarOpen }) =
       case 'analytics':
         return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('analytics')}</h2></div>;
       case 'settings':
-        return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('settings')}</h2></div>;
+        return <Settings />;
       default:
         return <Dashboard />;
     }

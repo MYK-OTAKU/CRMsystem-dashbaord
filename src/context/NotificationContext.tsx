@@ -16,8 +16,8 @@ export interface NotificationSettings {
 
 interface NotificationContextType {
   activeNotifications: Notification[];
-  notificationSettings: NotificationSettings;
-  showNotification: (type: Notification['type'], title: string, message: string) => void;
+  notifications: NotificationSettings;
+  showNotification: (message: string, type: Notification['type']) => void;
   removeNotification: (id: string) => void;
   toggleNotifications: (type: keyof NotificationSettings) => void;
   getNotificationHistory: () => Notification[];
@@ -40,7 +40,7 @@ interface NotificationProviderProps {
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   const [activeNotifications, setActiveNotifications] = useState<Notification[]>([]);
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
+  const [notifications, setNotifications] = useState<NotificationSettings>({
     email: true,
     push: true,
     sms: false,
@@ -50,20 +50,20 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   useEffect(() => {
     const savedSettings = localStorage.getItem('autorent_notification_settings');
     if (savedSettings) {
-      setNotificationSettings(JSON.parse(savedSettings));
+      setNotifications(JSON.parse(savedSettings));
     }
   }, []);
 
   // Sauvegarder les paramètres dans localStorage
   useEffect(() => {
-    localStorage.setItem('autorent_notification_settings', JSON.stringify(notificationSettings));
-  }, [notificationSettings]);
+    localStorage.setItem('autorent_notification_settings', JSON.stringify(notifications));
+  }, [notifications]);
 
-  const showNotification = (type: Notification['type'], title: string, message: string) => {
+  const showNotification = (message: string, type: Notification['type']) => {
     const notification: Notification = {
       id: Date.now().toString(),
       type,
-      title,
+      title: message,
       message,
       timestamp: new Date(),
     };
@@ -86,7 +86,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   };
 
   const toggleNotifications = (type: keyof NotificationSettings) => {
-    setNotificationSettings(prev => ({
+    setNotifications(prev => ({
       ...prev,
       [type]: !prev[type],
     }));
@@ -103,7 +103,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
   const value: NotificationContextType = {
     activeNotifications,
-    notificationSettings,
+    notifications,
     showNotification,
     removeNotification,
     toggleNotifications,

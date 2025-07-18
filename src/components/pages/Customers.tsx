@@ -81,7 +81,7 @@ const Customers: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">{t('customers')}</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{t('customers')}</h1>
         <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition-colors">
           <Plus className="h-5 w-5" />
           <span>{t('addCustomer')}</span>
@@ -89,8 +89,8 @@ const Customers: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 p-4 bg-slate-800 rounded-lg border border-slate-700">
-        <select className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white">
+      <div className="flex flex-wrap gap-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+        <select className="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-white">
           <option>{t('allStatuses')}</option>
           <option>{t('active')}</option>
           <option>VIP</option>
@@ -99,22 +99,22 @@ const Customers: React.FC = () => {
         <input 
           type="text" 
           placeholder={t('searchCustomer')}
-          className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400"
+          className="bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
         />
       </div>
 
       {/* Customers Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {customers.map((customer) => (
-          <div key={customer.id} className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-colors">
+          <div key={customer.id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
                   <User className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{customer.name}</h3>
-                  <p className="text-sm text-slate-400">{t('memberSince')} {customer.joinDate}</p>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{customer.name}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{t('memberSince')} {customer.joinDate}</p>
                 </div>
               </div>
               <span className={`px-3 py-1 rounded-full text-xs text-white ${getStatusColor(customer.status)}`}>
@@ -123,28 +123,28 @@ const Customers: React.FC = () => {
             </div>
 
             <div className="space-y-3 mb-4">
-              <div className="flex items-center space-x-2 text-slate-300">
+              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
                 <Mail className="h-4 w-4" />
                 <span className="text-sm">{customer.email}</span>
               </div>
-              <div className="flex items-center space-x-2 text-slate-300">
+              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
                 <Phone className="h-4 w-4" />
                 <span className="text-sm">{customer.phone}</span>
               </div>
-              <div className="flex items-center space-x-2 text-slate-300">
+              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
                 <MapPin className="h-4 w-4" />
                 <span className="text-sm">{customer.address}</span>
               </div>
             </div>
 
-            <div className="flex justify-between items-center mb-4 p-3 bg-slate-700 rounded-lg">
+            <div className="flex justify-between items-center mb-4 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
               <div className="text-center">
-                <p className="text-sm text-slate-400">{t('reservations')}</p>
-                <p className="text-lg font-semibold text-white">{customer.totalReservations}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">{t('reservations')}</p>
+                <p className="text-lg font-semibold text-slate-900 dark:text-white">{customer.totalReservations}</p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-slate-400">{t('totalSpent')}</p>
-                <p className="text-lg font-semibold text-green-400">{customer.totalSpent}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">{t('totalSpent')}</p>
+                <p className="text-lg font-semibold text-green-600 dark:text-green-400">{customer.totalSpent}</p>
               </div>
             </div>
 

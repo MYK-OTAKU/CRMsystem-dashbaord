@@ -109,7 +109,6 @@ const Reservations: React.FC = () => {
       </div>
 
       {/* Reservations Table */}
-      <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">

@@ -2,22 +2,20 @@ import React, { useState } from 'react';
 import { Car, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useNotification } from '../../context/NotificationContext';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 
-interface LoginProps {
-  onLogin: () => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: React.FC = () => {
   const { t } = useLanguage();
   const { showNotification } = useNotification();
+  const { signIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !password) {
@@ -27,11 +25,19 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     setIsLoading(true);
     
-    // Simulation de connexion avec délai
-    setTimeout(() => {
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        showNotification('Email ou mot de passe incorrect', 'error');
+      } else {
+        showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
+      }
+    } catch (error) {
+      showNotification('Erreur de connexion. Veuillez réessayer.', 'error');
+    } finally {
       setIsLoading(false);
-      onLogin();
-    }, 1500);
+    }
   };
 
   return (

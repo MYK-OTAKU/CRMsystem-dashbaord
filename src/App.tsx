@@ -8,24 +8,13 @@ import NotificationToast from './components/NotificationToast';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider, useNotification } from './context/NotificationContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const AppContent: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, loading } = useAuth();
   const [authPage, setAuthPage] = useState<'login' | 'forgot-password'>('login');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const { showNotification } = useNotification();
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setAuthPage('login');
-    showNotification('Vous avez été déconnecté avec succès.', 'info');
-  };
 
   // Gestion des changements d'URL pour la récupération de mot de passe
   React.useEffect(() => {
@@ -43,11 +32,19 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <>
         {authPage === 'login' ? (
-          <Login onLogin={handleLogin} />
+          <Login />
         ) : (
           <ForgotPassword onBack={() => setAuthPage('login')} />
         )}
@@ -61,7 +58,6 @@ const AppContent: React.FC = () => {
       <Header 
         sidebarOpen={sidebarOpen} 
         setSidebarOpen={setSidebarOpen}
-        onLogout={handleLogout}
       />
       
       <div className="flex h-screen pt-16">
@@ -86,9 +82,11 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <NotificationProvider>
-          <AppContent />
-        </NotificationProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <AppContent />
+          </NotificationProvider>
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

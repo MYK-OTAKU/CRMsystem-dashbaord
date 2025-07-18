@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Car, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useNotification } from '../../context/NotificationContext';
+import { supabase } from '../../lib/supabase';
 
 interface ForgotPasswordProps {
   onBack: () => void;
@@ -8,13 +10,36 @@ interface ForgotPasswordProps {
 
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
   const { t } = useLanguage();
+  const { showNotification } = useNotification();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulation d'envoi d'email
-    setIsSubmitted(true);
+    
+    if (!email) {
+      showNotification('Veuillez entrer votre email', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) {
+        showNotification('Erreur lors de l\'envoi de l\'email', 'error');
+      } else {
+        setIsSubmitted(true);
+      }
+    } catch (error) {
+      showNotification('Erreur de connexion. Veuillez réessayer.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -79,9 +104,10 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
 
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
             >
-              {t('sendResetLink')}
+              {isLoading ? 'Envoi en cours...' : t('sendResetLink')}
             </button>
           </form>
 

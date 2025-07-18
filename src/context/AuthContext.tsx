@@ -30,7 +30,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // En mode développement sans Supabase, simuler un utilisateur
+  const isDevelopment = !import.meta.env.VITE_SUPABASE_URL;
+
   useEffect(() => {
+    if (isDevelopment) {
+      // Mode développement - pas de vraie authentification
+      setLoading(false);
+      return;
+    }
+
     // Récupérer la session initiale
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -62,9 +71,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isDevelopment]);
 
   const signIn = async (email: string, password: string) => {
+    if (isDevelopment) {
+      // Mode développement
+      if (email === 'admin@autorent.com' && password === 'admin123') {
+        const mockUser = {
+          id: 'dev-user',
+          email: 'admin@autorent.com',
+          user_metadata: { full_name: 'Admin Développement' }
+        } as User;
+        setUser(mockUser);
+        return { error: null };
+      } else {
+        return { error: { message: 'Identifiants incorrects' } };
+      }
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -73,6 +97,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const signOut = async () => {
+    if (isDevelopment) {
+      setUser(null);
+      return;
+    }
     await supabase.auth.signOut();
   };
 

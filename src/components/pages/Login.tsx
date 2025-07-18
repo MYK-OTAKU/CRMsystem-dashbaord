@@ -26,12 +26,24 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await signIn(email, password);
-      
-      if (error) {
-        showNotification('Email ou mot de passe incorrect', 'error');
+      // En mode développement sans Supabase, simuler une connexion
+      if (!import.meta.env.VITE_SUPABASE_URL) {
+        // Simulation pour le développement
+        if (email === 'admin@autorent.com' && password === 'admin123') {
+          showNotification('Connexion réussie ! (Mode développement)', 'success');
+          // Simuler une connexion réussie
+          window.location.reload();
+        } else {
+          showNotification('Utilisez admin@autorent.com / admin123 en mode développement', 'error');
+        }
       } else {
-        showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
+        const { error } = await signIn(email, password);
+        
+        if (error) {
+          showNotification('Email ou mot de passe incorrect', 'error');
+        } else {
+          showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
+        }
       }
     } catch (error) {
       showNotification('Erreur de connexion. Veuillez réessayer.', 'error');

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Car, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useNotification } from '../../context/NotificationContext';
-import { supabase } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 
 interface ForgotPasswordProps {
   onBack: () => void;
@@ -26,14 +26,21 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBack }) => {
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      
-      if (error) {
-        showNotification('Erreur lors de l\'envoi de l\'email', 'error');
+      if (!isSupabaseConfigured()) {
+        // Mode développement - simuler l'envoi
+        setTimeout(() => {
+          setIsSubmitted(true);
+        }, 1000);
       } else {
-        setIsSubmitted(true);
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        
+        if (error) {
+          showNotification('Erreur lors de l\'envoi de l\'email', 'error');
+        } else {
+          setIsSubmitted(true);
+        }
       }
     } catch (error) {
       showNotification('Erreur de connexion. Veuillez réessayer.', 'error');

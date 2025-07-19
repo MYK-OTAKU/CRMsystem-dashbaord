@@ -1,10 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'demo-key';
-
-// En mode développement, utiliser des valeurs par défaut pour éviter les erreurs
-const isDevelopment = !import.meta.env.VITE_SUPABASE_URL;
+// Utiliser des valeurs par défaut pour éviter les erreurs en développement
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -14,7 +12,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
+// Vérifier si Supabase est configuré
+export const isSupabaseConfigured = () => {
+  return import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY;
+};
+
 // Avertir en mode développement
-if (isDevelopment) {
-  console.warn('⚠️ Supabase non configuré - utilisation de valeurs par défaut. Cliquez sur "Connect to Supabase" pour configurer.');
+if (!isSupabaseConfigured()) {
+  console.warn('⚠️ Supabase non configuré - mode développement activé');
 }

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -30,11 +30,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // En mode développement sans Supabase, simuler un utilisateur
-  const isDevelopment = !import.meta.env.VITE_SUPABASE_URL;
-
   useEffect(() => {
-    if (isDevelopment) {
+    if (!isSupabaseConfigured()) {
       // Mode développement - pas de vraie authentification
       setLoading(false);
       return;
@@ -61,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const now = new Date();
         const timeUntilExpiry = expiresAt.getTime() - now.getTime();
         
-        // Si la session expire dans moins de 6 heures, programmer la déconnexion
+        // Si la session expire dans 6 heures, programmer la déconnexion
         if (timeUntilExpiry > 0 && timeUntilExpiry <= 6 * 60 * 60 * 1000) {
           setTimeout(() => {
             signOut();
@@ -71,21 +68,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [isDevelopment]);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
-    if (isDevelopment) {
+    if (!isSupabaseConfigured()) {
       // Mode développement
       if (email === 'admin@autorent.com' && password === 'admin123') {
         const mockUser = {
           id: 'dev-user',
           email: 'admin@autorent.com',
-          user_metadata: { full_name: 'Admin Développement' }
+          user_metadata: { full_name: 'Admin Développement' },
+          aud: 'authenticated',
+          created_at: new Date().toISOString()
         } as User;
         setUser(mockUser);
         return { error: null };
       } else {
-        return { error: { message: 'Identifiants incorrects' } };
+        return { error: { message: 'Identifiants incorrects. Utilisez admin@autorent.com / admin123' } };
       }
     }
 
@@ -97,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const signOut = async () => {
-    if (isDevelopment) {
+    if (!isSupabaseConfigured()) {
       setUser(null);
       return;
     }

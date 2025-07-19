@@ -36,14 +36,14 @@ const Login: React.FC = () => {
         } else {
           showNotification('Utilisez admin@autorent.com / admin123 en mode développement', 'error');
         }
+      }
+      
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        showNotification(error.message || 'Email ou mot de passe incorrect', 'error');
       } else {
-        const { error } = await signIn(email, password);
-        
-        if (error) {
-          showNotification('Email ou mot de passe incorrect', 'error');
-        } else {
-          showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
-        }
+        showNotification('Connexion réussie ! Bienvenue dans AutoRent Pro.', 'success');
       }
     } catch (error) {
       showNotification('Erreur de connexion. Veuillez réessayer.', 'error');

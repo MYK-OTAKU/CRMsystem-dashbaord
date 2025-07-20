@@ -3,6 +3,11 @@ import Dashboard from './pages/Dashboard';
 import Vehicles from './pages/Vehicles';
 import Reservations from './pages/Reservations';
 import Customers from './pages/Customers';
+import Contracts from './pages/Contracts';
+import Payments from './pages/Payments';
+import Maintenance from './pages/Maintenance';
+import Locations from './pages/Locations';
+import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -25,15 +30,15 @@ const MainContent: React.FC<MainContentProps> = ({ currentPage, sidebarOpen }) =
       case 'customers':
         return <Customers />;
       case 'contracts':
-        return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('contracts')}</h2></div>;
+        return <Contracts />;
       case 'payments':
-        return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('payments')}</h2></div>;
+        return <Payments />;
       case 'maintenance':
-        return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('maintenance')}</h2></div>;
+        return <Maintenance />;
       case 'locations':
-        return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('locations')}</h2></div>;
+        return <Locations />;
       case 'analytics':
-        return <div className="p-6"><h2 className="text-2xl font-bold text-white">{t('analytics')}</h2></div>;
+        return <Analytics />;
       case 'settings':
         return <Settings />;
       default:

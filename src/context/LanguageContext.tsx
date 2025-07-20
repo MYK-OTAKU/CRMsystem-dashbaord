@@ -81,6 +81,7 @@ const translations = {
     allStatuses: 'Tous Statuts',
     available: 'Disponible',
     rented: 'Loué',
+    maintenance: 'Maintenance',
     edit: 'Modifier',
     
     // Reservations
